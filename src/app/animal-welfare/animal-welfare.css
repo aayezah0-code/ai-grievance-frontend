@@ -1,0 +1,324 @@
+/* ─── Animal Welfare Page Styles ─── */
+
+.aw-main { padding: 2rem 2.5rem; }
+
+/* ── Hero ── */
+.aw-hero {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  align-items: stretch;
+}
+
+/* Animal Welfare left box – wide rectangle with bg image */
+.aw-hero-left {
+  background:
+    linear-gradient(135deg, rgba(5,6,25,0.75) 0%, rgba(14,8,45,0.80) 100%),
+    url('/animalwelfarebg.png') center/cover no-repeat;
+  border: 1px solid rgba(139,92,246,0.25);
+  border-radius: 20px;
+  padding: 2.2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 230px;
+}
+.aw-hero-left::before {
+  content:'';
+  position:absolute;top:-40px;right:-40px;
+  width:250px;height:250px;
+  background:radial-gradient(circle,rgba(139,92,246,0.2),transparent 70%);
+  pointer-events:none;
+}
+
+.aw-badge {
+  display: inline-flex;align-items:center;gap:6px;
+  background:rgba(236,72,153,0.15);border:1px solid rgba(236,72,153,0.35);
+  color:#f472b6;border-radius:999px;padding:4px 14px;font-size:0.7rem;
+  font-weight:700;letter-spacing:0.05em;width:fit-content;margin-bottom:0.9rem;
+}
+
+.aw-title { font-size:2.8rem;font-weight:900;line-height:1.1;margin-bottom:0.6rem; }
+.aw-title span { color:#a855f7;text-shadow:0 0 20px rgba(168,85,247,0.5); }
+.aw-sub { font-size:0.88rem;color:rgba(255,255,255,0.75);line-height:1.65;margin-bottom:1.3rem; }
+.aw-hl { color:#f472b6;font-weight:700; }
+
+.aw-stats-row { display:flex;gap:0.8rem;flex-wrap:wrap; }
+.aw-stat-pill {
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px;padding:0.5rem 1rem;font-size:0.82rem;color:rgba(255,255,255,0.85);
+  backdrop-filter:blur(6px);
+}
+.aw-stat-pill strong { color:white;font-size:1rem; }
+
+/* Pledge Card – small square with bg image */
+.aw-pledge-card {
+  background:
+    linear-gradient(135deg, rgba(5,6,25,0.72) 0%, rgba(18,8,50,0.78) 100%),
+    url('/yourreportbg.png') center/cover no-repeat;
+  border:1px solid rgba(139,92,246,0.25);border-radius:20px;
+  padding:1.6rem 1.6rem;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;
+  width:320px;min-height:230px;
+}
+.aw-pledge-label {
+  font-size:0.62rem;letter-spacing:0.1em;color:rgba(255,255,255,0.4);
+  font-weight:700;margin-bottom:0.8rem;
+}
+.aw-pledge-title { font-size:1.35rem;font-weight:800;line-height:1.25;margin-bottom:0.8rem; }
+.aw-pledge-title span { color:#a855f7; }
+.aw-pledge-quote { font-size:0.73rem;color:rgba(255,255,255,0.62);line-height:1.6;margin-bottom:1.1rem;font-style:italic; }
+.aw-pledge-dog {
+  position:absolute;top:1rem;right:1rem;
+  width:54px;height:54px;border-radius:50%;background:rgba(168,85,247,0.12);
+  border:2px solid rgba(168,85,247,0.4);display:flex;align-items:center;justify-content:center;
+  font-size:1.7rem;
+}
+.aw-mission-btn {
+  background:linear-gradient(135deg,#7c3aed,#9333ea);border:none;
+  color:white;padding:0.55rem 1.2rem;border-radius:10px;font-weight:700;
+  font-size:0.78rem;cursor:pointer;transition:all 0.3s;width:fit-content;
+}
+.aw-mission-btn:hover { transform:translateY(-2px);box-shadow:0 8px 20px rgba(139,92,246,0.4); }
+
+/* ── Main Grid ── */
+.aw-grid {
+  display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;
+}
+
+/* ── Card Base ── */
+.aw-card {
+  background:linear-gradient(135deg,rgba(15,10,45,0.95),rgba(20,12,55,0.9));
+  border:1px solid rgba(139,92,246,0.2);border-radius:20px;padding:1.4rem 1.5rem;
+}
+
+.aw-card-header {
+  display:flex;align-items:center;gap:0.6rem;margin-bottom:1.2rem;
+}
+.aw-card-icon { font-size:1rem;color:#a855f7; }
+.aw-card-header h3 {
+  font-size:0.75rem;font-weight:800;letter-spacing:0.08em;color:white;
+  text-transform:uppercase;
+}
+.aw-beta-badge {
+  background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.4);
+  color:#60a5fa;font-size:0.6rem;font-weight:700;padding:2px 8px;
+  border-radius:999px;letter-spacing:0.05em;
+}
+
+/* ── Upload ── */
+.aw-upload-row { display:grid;grid-template-columns:1fr 1.2fr;gap:0.8rem;margin-bottom:1rem; }
+
+.aw-upload-zone {
+  border:1.5px dashed rgba(139,92,246,0.3);border-radius:14px;
+  min-height:130px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;cursor:pointer;position:relative;
+  background:rgba(139,92,246,0.04);transition:all 0.3s;padding:0.8rem;
+}
+.aw-upload-zone:hover { border-color:rgba(168,85,247,0.6);background:rgba(139,92,246,0.08); }
+.aw-upload-icon { color:rgba(168,85,247,0.6);margin-bottom:0.5rem; }
+.aw-upload-label { font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.8); }
+.aw-upload-hint { font-size:0.68rem;color:rgba(255,255,255,0.35);margin-top:2px; }
+.aw-upload-section-label {
+  position:absolute;top:-10px;left:10px;
+  background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.3);
+  color:rgba(255,255,255,0.7);font-size:0.58rem;font-weight:700;letter-spacing:0.08em;
+  padding:1px 8px;border-radius:999px;
+}
+.aw-preview-media { width:100%;height:120px;object-fit:cover;border-radius:10px; }
+
+/* Describe */
+.aw-describe-zone { display:flex;flex-direction:column; }
+.aw-describe-label {
+  font-size:0.65rem;font-weight:700;letter-spacing:0.08em;
+  color:rgba(255,255,255,0.5);margin-bottom:0.5rem;
+}
+.aw-textarea-wrap { position:relative;flex:1; }
+.aw-textarea {
+  width:100%;min-height:110px;background:rgba(11,16,35,0.7);
+  border:1px solid rgba(124,58,237,0.25);border-radius:12px;
+  color:white;padding:0.7rem 2.4rem 0.7rem 0.85rem;font-size:0.8rem;
+  resize:none;outline:none;transition:border-color 0.3s;line-height:1.5;
+}
+.aw-textarea:focus { border-color:rgba(168,85,247,0.6);box-shadow:0 0 12px rgba(168,85,247,0.15); }
+.aw-textarea::placeholder { color:rgba(255,255,255,0.25); }
+.aw-mic-btn {
+  position:absolute;bottom:8px;right:8px;
+  width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(139,92,246,0.2);color:rgba(168,85,247,0.9);
+  display:flex;align-items:center;justify-content:center;transition:all 0.3s;
+}
+.aw-mic-btn:hover { background:rgba(139,92,246,0.4); }
+.aw-mic-btn.listening {
+  background:#a855f7;color:white;
+  animation:aw-mic-pulse 1.2s infinite;
+}
+@keyframes aw-mic-pulse {
+  0%,100% { box-shadow:0 0 0 0 rgba(168,85,247,0.7); }
+  50% { box-shadow:0 0 0 8px rgba(168,85,247,0); }
+}
+
+/* Address */
+.aw-address-section { margin-bottom:1rem; }
+.aw-address-label {
+  font-size:0.65rem;font-weight:700;letter-spacing:0.08em;
+  color:rgba(255,255,255,0.5);margin-bottom:0.5rem;
+}
+.aw-address-row { display:flex;gap:0.6rem;align-items:center; }
+.aw-address-input-wrap { position:relative;flex:1; }
+.aw-addr-icon { position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#a855f7; }
+.aw-address-input {
+  width:100%;background:rgba(11,16,35,0.7);border:1px solid rgba(124,58,237,0.25);
+  border-radius:10px;color:white;padding:0.55rem 0.8rem 0.55rem 2.2rem;
+  font-size:0.82rem;outline:none;transition:border-color 0.3s;
+}
+.aw-address-input:focus { border-color:rgba(168,85,247,0.6); }
+.aw-address-input::placeholder { color:rgba(255,255,255,0.25); }
+.aw-map-btn {
+  background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.3);
+  color:rgba(255,255,255,0.85);padding:0.55rem 0.9rem;border-radius:10px;
+  font-size:0.78rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:all 0.3s;
+}
+.aw-map-btn:hover { background:rgba(139,92,246,0.25);border-color:rgba(168,85,247,0.6); }
+
+/* Submit */
+.aw-submit-btn {
+  width:100%;background:linear-gradient(135deg,#7c3aed,#9333ea,#4f46e5);
+  border:none;color:white;padding:0.85rem;border-radius:14px;
+  font-size:0.85rem;font-weight:800;letter-spacing:0.05em;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:0.5rem;
+  transition:all 0.3s;box-shadow:0 8px 20px rgba(124,58,237,0.3);
+}
+.aw-submit-btn:hover { transform:translateY(-2px);box-shadow:0 12px 30px rgba(124,58,237,0.5); }
+.aw-submit-btn:disabled { opacity:0.6;cursor:not-allowed; }
+
+/* ── AI Assessment rows ── */
+.aw-assess-row {
+  display:flex;align-items:center;gap:0.7rem;
+  padding:0.7rem 0;border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.aw-assess-row:last-of-type { border-bottom:none; }
+.aw-assess-icon {
+  width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.05);
+  display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;
+  color:rgba(255,255,255,0.5);
+}
+.aw-assess-label { flex:1;font-size:0.8rem;color:rgba(255,255,255,0.55); }
+.aw-assess-value { font-size:0.82rem;font-weight:600;text-align:right; }
+
+.aw-analysis-btn {
+  width:100%;margin-top:1rem;
+  background:linear-gradient(135deg,#7c3aed,#9333ea);border:none;
+  color:white;padding:0.75rem;border-radius:12px;font-weight:700;font-size:0.82rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.5rem;
+  transition:all 0.3s;box-shadow:0 6px 18px rgba(124,58,237,0.35);
+}
+.aw-analysis-btn:hover { transform:translateY(-2px);box-shadow:0 10px 25px rgba(124,58,237,0.5); }
+
+.aw-assess-placeholder {
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:160px;text-align:center;gap:1rem;
+}
+.aw-placeholder-icon { font-size:2.5rem;opacity:0.5; }
+.aw-assess-placeholder p { font-size:0.8rem;color:rgba(255,255,255,0.35);line-height:1.6;max-width:200px; }
+
+/* ── Live Tracker ── */
+.aw-tracker { display:flex;flex-direction:column;gap:0; }
+.aw-tracker-step {
+  display:flex;gap:0.8rem;opacity:0.35;transition:opacity 0.5s;
+}
+.aw-tracker-step.done { opacity:1; }
+.aw-tracker-dot { display:flex;flex-direction:column;align-items:center;flex-shrink:0;padding-top:2px; }
+.aw-tracker-dot-inner {
+  width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,0.15);
+  border:2px solid rgba(255,255,255,0.2);flex-shrink:0;transition:all 0.5s;
+}
+.aw-tracker-dot-inner.active {
+  background:#10b981;border-color:#10b981;
+  box-shadow:0 0 10px rgba(16,185,129,0.6);
+}
+.aw-tracker-line {
+  width:2px;flex:1;min-height:30px;background:rgba(255,255,255,0.08);margin-top:4px;
+  border-radius:2px;transition:background 0.5s;
+}
+.aw-tracker-line.filled { background:rgba(16,185,129,0.4); }
+.aw-tracker-content { padding-bottom:1rem;flex:1; }
+.aw-tracker-head { display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px; }
+.aw-tracker-label { font-size:0.72rem;font-weight:800;letter-spacing:0.05em;color:white; }
+.aw-tracker-time { font-size:0.65rem;color:rgba(255,255,255,0.45);text-align:right;line-height:1.4; }
+.aw-tracker-desc { font-size:0.75rem;color:rgba(255,255,255,0.5);line-height:1.5; }
+
+/* ── Support Portal ── */
+.aw-support-section {
+  background:linear-gradient(135deg,rgba(15,10,45,0.97),rgba(20,12,55,0.93));
+  border:1px solid rgba(139,92,246,0.2);border-radius:20px;
+  padding:1.2rem 1.5rem;margin-bottom:1.5rem;
+}
+.aw-support-label {
+  font-size:0.7rem;font-weight:700;letter-spacing:0.1em;
+  color:rgba(255,255,255,0.45);margin-bottom:1rem;
+}
+.aw-support-grid { display:grid;grid-template-columns:repeat(6,1fr);gap:1rem; }
+.aw-support-card {
+  border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:1rem 0.8rem;
+  display:flex;flex-direction:column;gap:0.5rem;position:relative;overflow:hidden;
+  transition:transform 0.3s;
+}
+.aw-support-card:hover { transform:translateY(-3px); }
+.aw-support-info { display:flex;flex-direction:column;gap:2px; }
+.aw-support-num { font-size:1.5rem;font-weight:800;color:white; }
+.aw-support-name { font-size:0.68rem;color:rgba(255,255,255,0.5); }
+.aw-support-wave { position:absolute;bottom:6px;right:8px;font-size:1rem;opacity:0.3; }
+
+/* ── Reports Cards ── */
+.aw-reports-section { margin-bottom:2rem; }
+.aw-reports-title {
+  font-size:1.1rem;font-weight:700;margin-bottom:1rem;color:white;
+}
+.aw-reports-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1rem; }
+.aw-report-card {
+  background:linear-gradient(135deg,rgba(15,10,45,0.95),rgba(20,12,55,0.9));
+  border:1px solid rgba(139,92,246,0.18);border-radius:16px;padding:1rem 1.1rem;
+  transition:all 0.3s;
+}
+.aw-report-card:hover { transform:translateY(-3px);border-color:rgba(168,85,247,0.35); }
+.aw-report-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem; }
+.aw-report-animal { font-size:0.85rem;font-weight:700;color:white; }
+.aw-report-urgency { font-size:0.68rem;font-weight:700;padding:2px 10px;border-radius:999px; }
+.aw-report-desc { font-size:0.75rem;color:rgba(255,255,255,0.5);line-height:1.5;margin-bottom:0.7rem; }
+.aw-report-footer { display:flex;justify-content:space-between;align-items:center; }
+.aw-report-ngo { font-size:0.7rem;color:rgba(255,255,255,0.45); }
+.aw-report-status {
+  font-size:0.65rem;font-weight:600;background:rgba(16,185,129,0.15);
+  color:#10b981;padding:2px 8px;border-radius:999px;
+}
+
+/* ── Map Modal ── */
+.aw-map-overlay {
+  position:fixed;inset:0;background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(6px);z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+}
+.aw-map-modal {
+  background:linear-gradient(135deg,rgba(15,10,45,0.98),rgba(20,12,55,0.98));
+  border:1px solid rgba(139,92,246,0.3);border-radius:20px;
+  width:80vw;max-width:900px;overflow:hidden;
+}
+.aw-map-modal-header {
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.07);
+  font-weight:700;font-size:0.9rem;
+}
+.aw-map-close {
+  background:rgba(255,255,255,0.08);border:none;color:white;
+  width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.aw-map-loading {
+  height:450px;display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.5);font-size:0.9rem;
+}
