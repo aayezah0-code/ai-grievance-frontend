@@ -325,7 +325,28 @@ export default function AdminDashboardPage() {
             </h1>
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <a
+              href="https://indus.sarvam.ai/samvaad/monitor/agent-analytics/call-logs?appId=all_apps&channelType=v2v&campaignId=all_campaigns&from=2026-09-24&to=2026-09-30"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                padding: '0.65rem 1.15rem',
+                background: 'rgba(16, 185, 129, 0.12)',
+                border: '1px solid rgba(16, 185, 129, 0.35)',
+                borderRadius: '10px',
+                color: '#34d399',
+                textDecoration: 'none',
+                fontWeight: 700,
+                fontSize: '0.85rem',
+                transition: 'all 0.2s'
+              }}
+            >
+              <ExternalLink size={15} /> 🎙️ Sarvam Call Logs & Audio ↗
+            </a>
             <button
               onClick={fetchAllData}
               style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.65rem 1.25rem', background: 'rgba(168, 85, 247, 0.1)', border: '1px solid rgba(168, 85, 247, 0.3)', borderRadius: '10px', color: '#c084fc', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem' }}
@@ -737,6 +758,34 @@ export default function AdminDashboardPage() {
                       : "Caller disconnected or call was brief before grievance details were spoken."}
                   </div>
                 )}
+                {/* Direct Sarvam Call Logs & Recording Portal Link */}
+                <div style={{ marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                  <a
+                    href="https://indus.sarvam.ai/samvaad/monitor/agent-analytics/call-logs?appId=all_apps&channelType=v2v&campaignId=all_campaigns&from=2026-09-24&to=2026-09-30"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.6rem',
+                      background: 'linear-gradient(135deg, #059669, #10b981)',
+                      color: 'white',
+                      padding: '0.65rem 1.25rem',
+                      borderRadius: '10px',
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                      boxShadow: '0 4px 14px rgba(16, 185, 129, 0.25)',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <ExternalLink size={16} />
+                    <span>🎙️ Open Sarvam Live Call Logs & Audio Recording ↗</span>
+                  </a>
+                  <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.4rem' }}>
+                    Click above to open Sarvam Samvaad Live Monitor where you can listen to recordings, review audio telemetry, and inspect call details.
+                  </div>
+                </div>
               </div>
             )}
 
