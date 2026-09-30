@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { createContext, useContext, useState, useEffect } from 'react';
 
 const UserContext = createContext();
@@ -7,55 +7,85 @@ export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        setUser(parsedUser);
-        // Fetch fresh data from backend if user_id exists
-        if (parsedUser.user_id || parsedUser.id) {
-          fetchUserData(parsedUser.user_id || parsedUser.id);
-        }
-      } catch (e) {
-        console.error("Failed to parse user from localStorage", e);
-      }
-    }
-    setLoading(false);
-  }, []);
-
-  const fetchUserData = async (userId) => {
+  async function fetchUserData(userId, preservedData) {
+    if (!userId) return;
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/users/me/${userId}`);
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const res = await fetch(apiBase + '/api/users/me/' + userId);
       if (res.ok) {
         const freshData = await res.json();
-        // Use functional update to avoid stale closure bug
-        setUser(prev => {
-          const updatedUser = { ...(prev || {}), ...freshData, id: userId, user_id: userId };
+        setUser(function(prev) {
+          const existing = prev || {};
+          const pd = preservedData || {};
+          const updatedUser = {
+            ...existing,
+            ...freshData,
+            id: userId,
+            user_id: userId,
+            access_token: existing.access_token || pd.access_token || null,
+            role: freshData.role || existing.role || pd.role || 'citizen',
+          };
           localStorage.setItem('user', JSON.stringify(updatedUser));
           return updatedUser;
         });
       }
     } catch (err) {
-      console.error("Error fetching fresh user data:", err);
+      console.error('[UserContext] fetchUserData error:', err);
     }
-  };
+  }
 
-  const updateUser = (userData) => {
-    setUser(prev => {
+  useEffect(function() {
+    const savedUser = localStorage.getItem('user');
+    if (!savedUser) {
+      setLoading(false);
+      return;
+    }
+    let parsedUser;
+    try {
+      parsedUser = JSON.parse(savedUser);
+    } catch (e) {
+      console.error('[UserContext] localStorage parse error:', e);
+      localStorage.removeItem('user');
+      setLoading(false);
+      return;
+    }
+    setUser(parsedUser);
+    const uid = parsedUser.user_id || parsedUser.id;
+    if (uid) {
+      fetchUserData(uid, parsedUser).then(function() {
+        setLoading(false);
+      }).catch(function() {
+        setLoading(false);
+      });
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  function updateUser(userData) {
+    setUser(function(prev) {
       const updatedUser = { ...(prev || {}), ...userData };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       return updatedUser;
     });
-  };
+  }
 
-  const logout = () => {
+  function logout() {
     setUser(null);
     localStorage.removeItem('user');
-  };
+  }
 
   return (
-    <UserContext.Provider value={{ user, setUser, updateUser, logout, loading, refreshUser: () => fetchUserData(user?.id || user?.user_id) }}>
+    <UserContext.Provider value={{
+      user: user,
+      setUser: setUser,
+      updateUser: updateUser,
+      logout: logout,
+      loading: loading,
+      refreshUser: function() {
+        return fetchUserData(user && (user.id || user.user_id), user || {});
+      },
+    }}>
       {children}
     </UserContext.Provider>
   );

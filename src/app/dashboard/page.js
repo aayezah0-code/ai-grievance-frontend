@@ -122,9 +122,17 @@ export default function Dashboard() {
       }
 
       setAiStep('analyzing');
+      // Read JWT from context or localStorage fallback
+      const token = user?.access_token ||
+        (typeof window !== 'undefined'
+          ? (JSON.parse(localStorage.getItem('user') || '{}')?.access_token || null)
+          : null);
+      const complaintHeaders = { 'Content-Type': 'application/json' };
+      if (token) complaintHeaders['Authorization'] = 'Bearer ' + token;
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/complaints`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: complaintHeaders,
         body: JSON.stringify({
           citizen_name: userName,
           text: complaintText,

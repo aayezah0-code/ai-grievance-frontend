@@ -59,22 +59,10 @@ export default function SignupPage() {
       const data = await response.json();
       
       if (response.ok) {
-        // Auto-login logic
-        const userData = {
-          user_id: data.user_id,
-          id: data.user_id,
-          full_name: formData.fullName,
-          mobile_no: formData.mobileNo,
-          email: formData.email,
-          address: formData.address,
-          city: formData.city,
-          state: formData.state,
-          pincode: formData.pincode
-        };
-        updateUser(userData);
-        
-        alert(t('auth.registrationSuccessful'));
-        router.push('/dashboard');
+        // No JWT issued yet — user must verify email first
+        alert('Registration successful! Please check your email for a 6-digit verification code.');
+        const emailEncoded = encodeURIComponent(data.email || formData.email);
+        router.push('/verify-email?email=' + emailEncoded);
       } else {
         alert(data.detail || t('auth.registrationFailed'));
       }

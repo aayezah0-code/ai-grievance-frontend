@@ -179,12 +179,19 @@ export default function ReportGrievance() {
         }
       }
 
-      // 2. Submit complaint
+      // 2. Submit complaint with JWT for verified ownership
+      const token = user?.access_token || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}')?.access_token : null);
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/complaints`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ 
             citizen_name: name || user?.full_name || "Anonymous", 
+            user_id: user?.user_id || user?.id || null,
             text,
             image_url: imageUrl
         })

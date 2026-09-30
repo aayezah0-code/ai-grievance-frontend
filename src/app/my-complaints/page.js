@@ -127,34 +127,57 @@ const AIAnalysisModal = ({ isOpen, onClose, data }) => {
 
 export default function MyComplaints() {
   const { t } = useLanguage();
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
+    // Wait for UserContext to finish loading from localStorage before deciding
+    if (userLoading) return;
+
     const fetchComplaints = async () => {
+      const token = user?.access_token || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}')?.access_token : null);
+
+      if (!token) {
+        setComplaints([]);
+        setLoading(false);
+        return;
+      }
+
+      // Reset loading=true before each new fetch to prevent stale empty-state flash
+      setLoading(true);
+
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/complaints`);
-        const data = await res.json();
-        
-        // Filter by current user name if logged in, else show all
-        const currentUserName = user?.full_name || 'Citizen';
-        const userComplaints = user
-          ? data.filter(c => c.citizen_name === currentUserName)
-          : data;
-          
-        setComplaints(userComplaints);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/my-complaints`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setComplaints(data);
+        } else if (res.status === 401) {
+          console.warn('[MyComplaints] 401 - token may be expired, clearing complaints');
+          setComplaints([]);
+        } else if (res.status === 403) {
+          console.warn('[MyComplaints] 403 - access denied');
+          setComplaints([]);
+        } else {
+          console.error("Failed to fetch my-complaints:", res.status, res.statusText);
+          setComplaints([]);
+        }
       } catch (err) {
         console.error("Error fetching complaints:", err);
+        setComplaints([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchComplaints();
-  }, [user]);
+  }, [user, userLoading]);
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -165,11 +188,12 @@ export default function MyComplaints() {
 
   const getStatusClass = (status) => {
     const s = status?.toLowerCase() || '';
-    if (s.includes('submitted')) return 'status-submitted';
-    if (s.includes('pending')) return 'status-pending';
-    if (s.includes('progress')) return 'status-inprogress';
-    if (s.includes('resolved')) return 'status-resolved';
-    return 'status-pending';
+    if (s === 'completed' || s === 'resolved') return 'status-resolved';
+    if (s === 'in progress') return 'status-inprogress';
+    if (s === 'approved') return 'status-approved';
+    if (s === 'rejected') return 'status-rejected';
+    if (s === 'pending') return 'status-pending';
+    return 'status-submitted';
   };
 
   const handleViewAI = (complaint) => {
@@ -215,27 +239,40 @@ export default function MyComplaints() {
           <div className="dashboard-grid-premium">
             {complaints.map((complaint) => (
               <div key={complaint.id} className="complaint-card-premium">
-                {/* Image Section */}
-                <div className="card-image-wrapper">
-                  <img 
-                    src={complaint.image_url || 'https://images.unsplash.com/photo-1584467735815-f778f274e296?q=80&w=1000&auto=format&fit=crop'} 
-                    alt="Issue Evidence" 
-                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1516216628859-9bccecab13ca?q=80&w=1000&auto=format&fit=crop'; }}
-                  />
-                  <div className="card-image-overlay"></div>
-                  <div className="card-overlay-badges">
-                    <span className={`status-badge-premium ${getStatusClass(complaint.status)}`}>
-                      {complaint.status || 'Submitted'}
-                    </span>
-                    <div className="sentiment-badge-premium">
-                      <Zap size={14} color="#A855F7" />
-                      <span>{complaint.sentiment || 'Analyzing'}</span>
+                {/* Image Section — only rendered when an uploaded image exists */}
+                {complaint.image_url ? (
+                  <div className="card-image-wrapper">
+                    <img
+                      src={complaint.image_url}
+                      alt="Issue Evidence"
+                    />
+                    <div className="card-image-overlay"></div>
+                    <div className="card-overlay-badges">
+                      <span className={`status-badge-premium ${getStatusClass(complaint.status)}`}>
+                        {complaint.status || 'Submitted'}
+                      </span>
+                      <div className="sentiment-badge-premium">
+                        <Zap size={14} color="#A855F7" />
+                        <span>{complaint.sentiment || 'Analyzing'}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : null}
 
                 {/* Content Section */}
                 <div className="card-content-premium">
+                  {/* Badges shown here only when there is no image (image cards show them as overlays) */}
+                  {!complaint.image_url && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <span className={`status-badge-premium ${getStatusClass(complaint.status)}`}>
+                        {complaint.status || 'Submitted'}
+                      </span>
+                      <div className="sentiment-badge-premium">
+                        <Zap size={14} color="#A855F7" />
+                        <span>{complaint.sentiment || 'Analyzing'}</span>
+                      </div>
+                    </div>
+                  )}
                   <div className="card-header-premium">
                     <h3 className="card-title-premium">{complaint.title || complaint.category || 'Civic Grievance'}</h3>
                     <span className="complaint-id-badge">ID-{complaint.id}</span>

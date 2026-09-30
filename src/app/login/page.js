@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState('');
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -32,6 +33,9 @@ export default function LoginPage() {
       if (response.ok) {
         updateUser(data);
         router.push('/dashboard');
+      } else if (response.status === 403) {
+        // Email not verified — show inline prompt
+        setUnverifiedEmail(email);
       } else {
         alert(data.detail || t('auth.loginFailed'));
       }
@@ -104,6 +108,29 @@ export default function LoginPage() {
             {isLoading ? t('auth.loggingIn') : t('auth.login')} <span>&rarr;</span>
           </button>
         </form>
+
+        {/* Email not verified — inline prompt */}
+        {unverifiedEmail && (
+          <div style={{
+            marginTop: '1.25rem',
+            background: 'rgba(239,68,68,0.1)',
+            border: '1px solid rgba(239,68,68,0.35)',
+            borderRadius: '14px',
+            padding: '1rem 1.25rem',
+            textAlign: 'center'
+          }}>
+            <p style={{ color: '#fca5a5', fontSize: '0.9rem', marginBottom: '0.75rem', lineHeight: 1.5 }}>
+              Please verify your email before logging in.
+            </p>
+            <button
+              className="auth-btn"
+              style={{ marginTop: 0, padding: '0.6rem 1.5rem', fontSize: '0.9rem' }}
+              onClick={() => router.push('/verify-email?email=' + encodeURIComponent(unverifiedEmail))}
+            >
+              Verify Email <span>&rarr;</span>
+            </button>
+          </div>
+        )}
 
         <div className="auth-divider">{t('auth.orContinueWith')}</div>
 

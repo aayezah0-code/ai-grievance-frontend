@@ -15,7 +15,8 @@ import {
   Settings, 
   HelpCircle, 
   LogOut,
-  Globe
+  Globe,
+  Shield
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -23,7 +24,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { language, changeLanguage, t } = useLanguage();
-  const { logout } = useUser();
+  const { logout, user } = useUser();
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {

@@ -8,7 +8,7 @@ import Navbar from '@/components/Navbar';
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
-  const isAuthPage = pathname === '/login' || pathname === '/signup' || pathname === '/';
+  const isAuthPage = pathname === '/login' || pathname === '/signup' || pathname === '/' || pathname === '/verify-email';
 
   return (
     <html lang="en">

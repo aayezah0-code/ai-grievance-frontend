@@ -48,6 +48,9 @@ export default function Home() {
           </div>
           <Link href="/login" style={{ color: 'white', textDecoration: 'none', fontSize: '0.95rem', fontWeight: 500 }}>{t('auth.login')}</Link>
           <Link href="/signup" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6366f1)', padding: '0.6rem 1.75rem', borderRadius: '999px', color: 'white', textDecoration: 'none', fontSize: '0.95rem', fontWeight: 600, boxShadow: '0 5px 15px rgba(139, 92, 246, 0.3)' }}>{t('auth.register')}</Link>
+          <Link href="/admin/login" style={{ border: '1px solid rgba(168, 85, 247, 0.4)', background: 'rgba(168, 85, 247, 0.12)', padding: '0.6rem 1.25rem', borderRadius: '999px', color: '#c084fc', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span>🛡️</span> Admin Login
+          </Link>
         </div>
       </nav>
 
@@ -176,6 +179,27 @@ export default function Home() {
               <div style={{ fontSize: '2rem', fontWeight: 800, color: 'white' }}>98%</div>
               <div style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.7)' }}>Satisfaction Rate</div>
             </div>
+          </div>
+        </div>
+
+        {/* Admin Access Section */}
+        <div className="glass-panel animate-fade-in-up delay-3" style={{ marginTop: '3rem', padding: '2rem 3rem', borderRadius: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid rgba(168, 85, 247, 0.25)', background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(59, 130, 246, 0.04))' }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
+              <span style={{ fontSize: '1.2rem' }}>🛡️</span>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#c084fc', margin: 0 }}>Administrative Portal</h3>
+            </div>
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', margin: 0 }}>
+              Authorized administrators and municipal staff access only.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <Link href="/admin/login" style={{ padding: '0.7rem 1.75rem', background: 'linear-gradient(135deg, #8b5cf6, #6366f1)', border: 'none', borderRadius: '12px', color: 'white', textDecoration: 'none', fontSize: '0.92rem', fontWeight: 700, boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)' }}>
+              Admin Login
+            </Link>
+            <Link href="/admin/register" style={{ padding: '0.7rem 1.75rem', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', color: 'rgba(255,255,255,0.85)', textDecoration: 'none', fontSize: '0.92rem', fontWeight: 600 }}>
+              Admin Register
+            </Link>
           </div>
         </div>
 
