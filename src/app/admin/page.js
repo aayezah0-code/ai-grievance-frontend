@@ -43,10 +43,12 @@ export default function AdminDashboardPage() {
   const fetchAllData = async () => {
     setLoading(true);
     try {
+      const noCache = { cache: 'no-store', headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' } };
+      const ts = Date.now();
       const [compRes, analyticsRes, schemesRes] = await Promise.all([
-        fetch(`${API}/api/complaints`),
-        fetch(`${API}/api/analytics`),
-        fetch(`${API}/api/schemes`),
+        fetch(`${API}/api/complaints?_t=${ts}`, noCache),
+        fetch(`${API}/api/analytics?_t=${ts}`, noCache),
+        fetch(`${API}/api/schemes?_t=${ts}`, noCache),
       ]);
       const [compData, analyticsData, schemesData] = await Promise.all([
         compRes.json(), analyticsRes.json(), schemesRes.json()
