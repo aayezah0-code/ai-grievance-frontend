@@ -4,8 +4,8 @@ export function getMediaUrl(url) {
   const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const cleanApiBase = apiBase.replace(/\/$/, '');
 
-  // If it's a relative path like /uploads/...
-  if (url.startsWith('/uploads/')) {
+  // If it's a relative path like /uploads/... or /api/...
+  if (url.startsWith('/uploads/') || url.startsWith('/api/')) {
     return `${cleanApiBase}${url}`;
   }
 
