@@ -664,33 +664,78 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Voice Call Details (Sarvam AI) */}
-            {selectedComplaint.call_source === 'sarvam_voice' && (
+            {(selectedComplaint.call_source === 'sarvam_voice' || selectedComplaint.citizen_name?.includes('Voice Helpline') || selectedComplaint.call_transcript || selectedComplaint.recording_url) && (
               <div style={{ background: 'rgba(16, 185, 129, 0.07)', border: '1px solid rgba(16, 185, 129, 0.25)', borderRadius: '14px', padding: '1.25rem', marginBottom: '1.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
                   <span style={{ fontSize: '1.1rem' }}>📞</span>
                   <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#34d399', textTransform: 'uppercase', letterSpacing: '1px' }}>Voice Helpline Call (Sarvam AI)</span>
                   <span style={{ marginLeft: 'auto', fontSize: '0.7rem', padding: '2px 8px', borderRadius: '20px', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', fontWeight: 700, border: '1px solid rgba(16,185,129,0.3)' }}>🎙️ AI Voice Call</span>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
                   <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.75rem 1rem', borderRadius: '10px' }}>
                     <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '3px' }}>Caller Phone Number</div>
-                    <div style={{ fontWeight: 700, color: '#6ee7b7', fontSize: '0.95rem' }}>{selectedComplaint.caller_phone || 'Not captured'}</div>
+                    <div style={{ fontWeight: 700, color: '#6ee7b7', fontSize: '0.95rem' }}>{selectedComplaint.caller_phone || 'Captured via Helpline'}</div>
                   </div>
                   <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.75rem 1rem', borderRadius: '10px' }}>
                     <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '3px' }}>Call Source</div>
                     <div style={{ fontWeight: 700, color: '#6ee7b7', fontSize: '0.95rem' }}>Sarvam AI Voice Agent</div>
                   </div>
                 </div>
-                {selectedComplaint.call_transcript && (
+
+                {/* Call Audio Recording Player */}
+                {selectedComplaint.recording_url ? (
+                  <div style={{ background: 'rgba(0,0,0,0.35)', padding: '0.85rem 1rem', borderRadius: '12px', border: '1px solid rgba(52, 211, 153, 0.3)', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                      <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#34d399', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        🎧 Voice Call Recording
+                      </span>
+                      <a 
+                        href={getMediaUrl(selectedComplaint.recording_url)} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        style={{ fontSize: '0.72rem', color: '#6ee7b7', textDecoration: 'underline' }}
+                      >
+                        Download / Listen ↗
+                      </a>
+                    </div>
+                    <audio controls src={getMediaUrl(selectedComplaint.recording_url)} style={{ width: '100%', height: '36px', borderRadius: '6px' }}>
+                      Your browser does not support audio playback.
+                    </audio>
+                  </div>
+                ) : (
+                  <div style={{ background: 'rgba(255,255,255,0.02)', padding: '0.65rem 0.85rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.85rem' }}>ℹ️</span>
+                    <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)' }}>
+                      Call Audio: Enable "Call Recording" in Sarvam Inbound Settings to stream full audio clips here.
+                    </span>
+                  </div>
+                )}
+
+                {/* Spoken Problem / Original Text */}
+                <div style={{ marginBottom: '1rem' }}>
+                  <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '4px' }}>
+                    📢 Spoken Problem Reported
+                  </div>
+                  <div style={{ background: 'rgba(0,0,0,0.25)', padding: '0.75rem 1rem', borderRadius: '10px', fontSize: '0.88rem', color: '#f8fafc', border: '1px solid rgba(255,255,255,0.06)', lineHeight: 1.5 }}>
+                    {selectedComplaint.original_text || "Voice Grievance Reported via Helpline"}
+                  </div>
+                </div>
+
+                {/* Call Transcript */}
+                {selectedComplaint.call_transcript ? (
                   <div>
-                    <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '6px' }}>📝 Call Transcript</div>
-                    <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '10px', padding: '1rem', fontSize: '0.85rem', lineHeight: 1.7, color: 'rgba(255,255,255,0.85)', maxHeight: '180px', overflowY: 'auto', whiteSpace: 'pre-wrap', fontFamily: 'monospace', border: '1px solid rgba(255,255,255,0.07)' }}>
+                    <div style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '6px' }}>📝 Live Call Transcript</div>
+                    <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '10px', padding: '1rem', fontSize: '0.85rem', lineHeight: 1.7, color: 'rgba(255,255,255,0.85)', maxHeight: '200px', overflowY: 'auto', whiteSpace: 'pre-wrap', fontFamily: 'monospace', border: '1px solid rgba(255,255,255,0.07)' }}>
                       {selectedComplaint.call_transcript}
                     </div>
                   </div>
-                )}
-                {!selectedComplaint.call_transcript && (
-                  <div style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.35)', fontStyle: 'italic' }}>Transcript not available (add 'call_transcript' field in Sarvam tool params to capture it)</div>
+                ) : (
+                  <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', fontStyle: 'italic' }}>
+                    {selectedComplaint.original_text && selectedComplaint.original_text !== 'Voice Grievance Reported via Helpline' 
+                      ? "Transcript processed into grievance text above."
+                      : "Caller disconnected or call was brief before grievance details were spoken."}
+                  </div>
                 )}
               </div>
             )}
