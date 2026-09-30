@@ -11,8 +11,9 @@ import {
 import { useLanguage } from '@/context/LanguageContext';
 import { useUser } from '@/context/UserContext';
 import { getMediaUrl } from '@/utils/media';
+import { getApiBase } from '@/utils/api';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API = getApiBase();
 
 // --- AI ANALYSIS MODAL COMPONENT ---
 const AIAnalysisModal = ({ isOpen, onClose, data }) => {

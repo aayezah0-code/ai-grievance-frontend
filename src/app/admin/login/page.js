@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import ParticleBackground from '@/components/ParticleBackground';
 import { useUser } from '@/context/UserContext';
 import { Shield, Lock, Mail, Eye, EyeOff, AlertCircle, ArrowRight, ArrowLeft } from 'lucide-react';
+import { getApiBase } from '@/utils/api';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -21,7 +22,8 @@ export default function AdminLoginPage() {
     setErrorMsg('');
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/auth/login`, {
+      const apiBase = getApiBase();
+      const res = await fetch(`${apiBase}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

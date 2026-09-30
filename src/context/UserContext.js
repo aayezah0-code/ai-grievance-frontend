@@ -1,5 +1,6 @@
-﻿'use client';
+'use client';
 import { createContext, useContext, useState, useEffect } from 'react';
+import { getApiBase } from '@/utils/api';
 
 const UserContext = createContext();
 
@@ -10,7 +11,7 @@ export function UserProvider({ children }) {
   async function fetchUserData(userId, preservedData) {
     if (!userId) return;
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const apiBase = getApiBase();
       const res = await fetch(apiBase + '/api/users/me/' + userId);
       if (res.ok) {
         const freshData = await res.json();

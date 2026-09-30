@@ -1,7 +1,9 @@
+import { getApiBase } from '@/utils/api';
+
 export function getMediaUrl(url) {
   if (!url || typeof url !== 'string') return '';
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const apiBase = getApiBase();
   const cleanApiBase = apiBase.replace(/\/$/, '');
 
   // If it's a relative path like /uploads/... or /api/...

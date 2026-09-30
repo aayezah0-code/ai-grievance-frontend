@@ -9,8 +9,8 @@ import {
   Building2, Layers, AlertOctagon, HelpCircle, ExternalLink, X
 } from 'lucide-react';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 import { getMediaUrl } from '@/utils/media';
+import { getApiBase } from '@/utils/api';
 
 export default function AdminDashboardPage() {
   const { user, logout, loading: userLoading } = useUser();
@@ -33,8 +33,9 @@ export default function AdminDashboardPage() {
     if (!complaintId || feedbackData[complaintId]) return;
     setFeedbackLoading(true);
     try {
+      const apiBase = getApiBase();
       const token = user?.access_token || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}')?.access_token : null);
-      const res = await fetch(`${API}/api/complaints/${complaintId}/feedback`, {
+      const res = await fetch(`${apiBase}/api/complaints/${complaintId}/feedback`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -73,19 +74,22 @@ export default function AdminDashboardPage() {
   const fetchAllData = async () => {
     setLoading(true);
     try {
+      const apiBase = getApiBase();
       const noCache = { cache: 'no-store', headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' } };
       const ts = Date.now();
       const [compRes, analyticsRes, schemesRes] = await Promise.all([
-        fetch(`${API}/api/complaints?_t=${ts}`, noCache),
-        fetch(`${API}/api/analytics?_t=${ts}`, noCache),
-        fetch(`${API}/api/schemes?_t=${ts}`, noCache),
+        fetch(`${apiBase}/api/complaints?_t=${ts}`, noCache),
+        fetch(`${apiBase}/api/analytics?_t=${ts}`, noCache),
+        fetch(`${apiBase}/api/schemes?_t=${ts}`, noCache),
       ]);
       const [compData, analyticsData, schemesData] = await Promise.all([
-        compRes.json(), analyticsRes.json(), schemesRes.json()
+        compRes.ok ? compRes.json() : [],
+        analyticsRes.ok ? analyticsRes.json() : { total: 0, resolved: 0, departments: {}, priorities: {} },
+        schemesRes.ok ? schemesRes.json() : []
       ]);
-      setComplaints(compData || []);
-      setAnalytics(analyticsData || { total: 0, resolved: 0, departments: {}, priorities: {} });
-      setSchemes(schemesData || []);
+      setComplaints(Array.isArray(compData) ? compData : []);
+      setAnalytics(analyticsData && typeof analyticsData === 'object' && !analyticsData.detail ? analyticsData : { total: 0, resolved: 0, departments: {}, priorities: {} });
+      setSchemes(Array.isArray(schemesData) ? schemesData : []);
     } catch (err) {
       console.error('Admin data fetch error:', err);
     } finally {
@@ -94,7 +98,11 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
-    if (user && user.role === 'admin') {
+    fetchAllData();
+  }, []);
+
+  useEffect(() => {
+    if (user && user.role?.toLowerCase() === 'admin') {
       fetchAllData();
     }
   }, [user]);
@@ -110,7 +118,8 @@ export default function AdminDashboardPage() {
 
     setUpdatingId(id);
     try {
-      const res = await fetch(`${API}/api/complaints/${id}/status`, {
+      const apiBase = getApiBase();
+      const res = await fetch(`${apiBase}/api/complaints/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +135,7 @@ export default function AdminDashboardPage() {
           setSelectedComplaint(prev => ({ ...prev, status: updatedComplaint.status }));
         }
         // Refresh analytics in background
-        fetch(`${API}/api/analytics`).then(r => r.json()).then(data => setAnalytics(data)).catch(() => {});
+        fetch(`${apiBase}/api/analytics`).then(r => r.json()).then(data => setAnalytics(data)).catch(() => {});
       } else {
         const errData = await res.json().catch(() => ({}));
         if (res.status === 401) {
@@ -149,7 +158,8 @@ export default function AdminDashboardPage() {
   const deleteScheme = async (id) => {
     if (!confirm('Are you sure you want to delete this scheme?')) return;
     try {
-      await fetch(`${API}/api/schemes/${id}`, { method: 'DELETE' });
+      const apiBase = getApiBase();
+      await fetch(`${apiBase}/api/schemes/${id}`, { method: 'DELETE' });
       setSchemes(prev => prev.filter(s => s.id !== id));
     } catch (err) {
       alert('Failed to delete scheme.');
