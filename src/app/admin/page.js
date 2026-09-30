@@ -410,8 +410,8 @@ export default function AdminDashboardPage() {
                                 </td>
                                 <td style={{ padding: '1.1rem 1.25rem' }}>
                                   <div style={{ fontWeight: 600 }}>{c.citizen_name || 'Anonymous'}</div>
-                                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>
-                                    {c.user_id ? `User UID: ${c.user_id}` : 'Unlinked / Legacy'}
+                                  <div style={{ fontSize: '0.75rem', color: c.caller_phone ? '#34d399' : 'rgba(255,255,255,0.4)', display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '2px' }}>
+                                    {c.caller_phone ? `📞 ${c.caller_phone}` : (c.user_id ? `User UID: ${c.user_id}` : 'Web / Voice')}
                                   </div>
                                 </td>
                                 <td style={{ padding: '1.1rem 1.25rem', maxWidth: '320px' }}>
