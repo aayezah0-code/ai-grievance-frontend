@@ -100,6 +100,7 @@ export default function AdminLoginPage() {
               className="auth-input" 
               placeholder="Admin Password" 
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', padding: '0.85rem 2.75rem 0.85rem 2.75rem', borderRadius: '12px', width: '100%', fontSize: '0.92rem' }}
