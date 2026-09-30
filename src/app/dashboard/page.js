@@ -171,7 +171,8 @@ export default function Dashboard() {
         method: 'POST',
         headers: complaintHeaders,
         body: JSON.stringify({
-          citizen_name: userName,
+          citizen_name: userName || user?.full_name || "Citizen",
+          user_id: user?.user_id || user?.id || null,
           text: complaintText,
           latitude: selectedLocation?.lat?.toString(),
           longitude: selectedLocation?.lng?.toString(),

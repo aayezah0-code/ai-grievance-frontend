@@ -25,6 +25,36 @@ export default function AdminDashboardPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedComplaint, setSelectedComplaint] = useState(null);
+  const [feedbackData, setFeedbackData] = useState({}); // keyed by complaint_id
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
+
+  // Fetch feedback data for a complaint (admin only)
+  const fetchFeedback = async (complaintId) => {
+    if (!complaintId || feedbackData[complaintId]) return;
+    setFeedbackLoading(true);
+    try {
+      const token = user?.access_token || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}')?.access_token : null);
+      const res = await fetch(`${API}/api/complaints/${complaintId}/feedback`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setFeedbackData(prev => ({ ...prev, [complaintId]: data }));
+      }
+    } catch (err) {
+      console.error('Error fetching feedback:', err);
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedComplaint?.id) {
+      fetchFeedback(selectedComplaint.id);
+    }
+  }, [selectedComplaint]);
 
   // Admin Route Protection
   useEffect(() => {
@@ -810,6 +840,65 @@ export default function AdminDashboardPage() {
                 ))}
               </div>
             </div>
+
+            {/* ─── CITIZEN FEEDBACK & RESOLUTION CONFIRMATION ─── */}
+            {(() => {
+              const fb = feedbackData[selectedComplaint.id];
+              const feedbackText = fb?.feedback?.text;
+              const feedbackDate = fb?.feedback?.submitted_at;
+              const resResponse = fb?.resolution_confirmation?.response;
+              const resDate = fb?.resolution_confirmation?.confirmed_at;
+
+              const resLabel = resResponse === 'solved'
+                ? { text: '✓ Solved (Citizen Confirmed)', color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)' }
+                : resResponse === 'not_solved'
+                ? { text: '✕ Not Solved (Citizen Disputed)', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)' }
+                : { text: 'Awaiting citizen confirmation', color: '#fbbf24', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.2)' };
+
+              return (
+                <div style={{ marginTop: '1.75rem', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#c084fc', textTransform: 'uppercase', letterSpacing: '1.2px', marginBottom: '1rem' }}>
+                    Citizen Feedback & Resolution Confirmation
+                  </div>
+
+                  {feedbackLoading && !fb ? (
+                    <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem' }}>Loading feedback data...</div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                      {/* Citizen Feedback */}
+                      <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', padding: '1rem 1.1rem' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem', fontWeight: 700 }}>Citizen Feedback</div>
+                        {feedbackText ? (
+                          <>
+                            <p style={{ margin: 0, fontSize: '0.92rem', lineHeight: 1.6, color: 'rgba(255,255,255,0.85)', fontStyle: 'italic' }}>"{feedbackText}"</p>
+                            {feedbackDate && (
+                              <div style={{ marginTop: '0.4rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>
+                                Submitted: {new Date(feedbackDate).toLocaleString('en-IN')}
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <span style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.3)' }}>Not submitted</span>
+                        )}
+                      </div>
+
+                      {/* Resolution Confirmation */}
+                      <div style={{ background: resLabel.bg, border: `1px solid ${resLabel.border}`, borderRadius: '12px', padding: '1rem 1.1rem' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '0.4rem', fontWeight: 700 }}>Resolution Confirmation</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ fontWeight: 800, fontSize: '0.95rem', color: resLabel.color }}>{resLabel.text}</span>
+                        </div>
+                        {resDate && (
+                          <div style={{ marginTop: '0.35rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)' }}>
+                            Confirmed: {new Date(resDate).toLocaleString('en-IN')}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
           </div>
         </div>

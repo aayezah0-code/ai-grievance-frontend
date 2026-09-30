@@ -59,12 +59,18 @@ export default function SignupPage() {
       const data = await response.json();
       
       if (response.ok) {
-        // No JWT issued yet — user must verify email first
-        alert('Registration successful! Please check your email for a 6-digit verification code.');
+        alert(data.message || 'Registration successful! Please check your email for a 6-digit verification code.');
         const emailEncoded = encodeURIComponent(data.email || formData.email);
         router.push('/verify-email?email=' + emailEncoded);
       } else {
-        alert(data.detail || t('auth.registrationFailed'));
+        const detailMsg = data.detail || t('auth.registrationFailed');
+        if (detailMsg.toLowerCase().includes('already registered and verified') || detailMsg.toLowerCase().includes('login page')) {
+          if (confirm(`${detailMsg}\n\nWould you like to go to the Login page now?`)) {
+            router.push('/login');
+            return;
+          }
+        }
+        alert(detailMsg);
       }
     } catch (error) {
       alert(t('auth.serverError'));
