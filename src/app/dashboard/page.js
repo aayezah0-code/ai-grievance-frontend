@@ -6,7 +6,7 @@ import Sidebar from '@/components/Sidebar';
 import CivicImpactGallery from '@/components/CivicImpactGallery';
 import { 
   FileText, CheckCircle, Clock, Mic, MapPin, Camera, Send, Search,
-  X, Tag, Building2, Zap, Eye
+  X, Tag, Building2, Zap, Eye, PhoneCall, PhoneForwarded
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useUser } from '@/context/UserContext';
@@ -42,12 +42,48 @@ export default function Dashboard() {
   const [showMapModal, setShowMapModal] = useState(false);
   const [lastSubmission, setLastSubmission] = useState(null);
 
+  // AI Voice Helpline state
+  const [showVoiceModal, setShowVoiceModal] = useState(false);
+  const [callbackPhone, setCallbackPhone] = useState('');
+  const [callbackLoading, setCallbackLoading] = useState(false);
+  const [callbackResult, setCallbackResult] = useState(null);
+
   useEffect(() => {
     if (user) {
       setUserName(user.full_name || 'Citizen');
+      if (user.mobile_no) {
+        setCallbackPhone(user.mobile_no);
+      }
     }
     fetchAnalytics();
   }, [user]);
+
+  const handleRequestCallback = async () => {
+    const cleanDigits = callbackPhone.replace(/\D/g, '');
+    if (cleanDigits.length < 10) {
+      alert("Please enter a valid 10-digit mobile number");
+      return;
+    }
+    setCallbackLoading(true);
+    setCallbackResult(null);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/request-callback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone_number: callbackPhone.trim() })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCallbackResult({ success: true, message: data.message });
+      } else {
+        setCallbackResult({ success: false, message: data.message || data.error || 'Failed to trigger callback' });
+      }
+    } catch(err) {
+      setCallbackResult({ success: false, message: 'Server error. Please check connection and try again.' });
+    } finally {
+      setCallbackLoading(false);
+    }
+  };
 
   const fetchAnalytics = async () => {
     try {
@@ -171,12 +207,40 @@ export default function Dashboard() {
       <main className="main-content">
 
         {/* Welcome */}
-        <section className="welcome-header">
+        <section className="welcome-header" style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'1.5rem' }}>
           <div style={{ position:'relative', zIndex:2 }}>
             <p style={{ color:'var(--text-secondary)', fontSize:'0.9rem', marginBottom:'0.5rem' }}>{t('dashboard.overview')}</p>
             <h1>{t('dashboard.welcome')}, <span>{userName}</span> 👋</h1>
             <p style={{ color:'rgba(255,255,255,0.7)', fontSize:'1rem' }}>{t('dashboard.subtitle')}</p>
           </div>
+          
+          <div style={{ position:'relative', zIndex:2 }}>
+            <button 
+              type="button"
+              onClick={() => { setShowVoiceModal(true); setCallbackResult(null); }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '0.75rem 1.25rem',
+                borderRadius: '12px',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                cursor: 'pointer',
+                boxShadow: '0 4px 15px rgba(16,185,129,0.3)',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+              onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              <PhoneCall size={18} />
+              <span>📞 AI Voice Helpline</span>
+            </button>
+          </div>
+
           <div style={{ position:'absolute', top:'-50%', right:'-10%', width:'400px', height:'400px', background:'radial-gradient(circle, rgba(139,92,246,0.3) 0%, transparent 70%)', filter:'blur(40px)', zIndex:1 }}></div>
         </section>
 
@@ -418,6 +482,126 @@ export default function Dashboard() {
 
         <CivicImpactGallery />
       </main>
+
+      {/* ─── AI VOICE HELPLINE MODAL ─── */}
+      {showVoiceModal && (
+        <div className="modal-overlay" onClick={() => setShowVoiceModal(false)}>
+          <div className="ai-modal" onClick={e => e.stopPropagation()} style={{ maxWidth:'520px', padding:'2rem' }}>
+            <button className="modal-close-btn" onClick={() => setShowVoiceModal(false)}>
+              <X size={16} />
+            </button>
+
+            <div style={{ textAlign:'center', marginBottom:'1.5rem' }}>
+              <div style={{ width:'56px', height:'56px', borderRadius:'50%', background:'rgba(16,185,129,0.15)', border:'2px solid rgba(16,185,129,0.4)', display:'inline-flex', alignItems:'center', justifyContent:'center', marginBottom:'0.75rem' }}>
+                <PhoneCall size={26} color="#10b981" />
+              </div>
+              <h2 style={{ fontSize:'1.4rem', fontWeight:700, margin:'0 0 0.4rem 0' }}>AI Voice Helpline</h2>
+              <p style={{ color:'var(--text-secondary)', fontSize:'0.88rem', margin:0 }}>
+                24/7 Automated Voice Grievance Registration in Hindi & English
+              </p>
+            </div>
+
+            {/* Direct Helpline Number Box */}
+            <div style={{ background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'14px', padding:'1rem 1.25rem', marginBottom:'1.25rem' }}>
+              <div style={{ fontSize:'0.75rem', textTransform:'uppercase', letterSpacing:'0.05em', color:'var(--text-secondary)', marginBottom:'0.4rem', fontWeight:600 }}>
+                Option 1: Direct Toll-Free Call
+              </div>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', gap:'1rem', flexWrap:'wrap' }}>
+                <div>
+                  <div style={{ fontSize:'1.25rem', fontWeight:700, color:'#34d399', letterSpacing:'0.02em' }}>
+                    +91 7965480398
+                  </div>
+                  <div style={{ fontSize:'0.75rem', color:'rgba(255,255,255,0.6)', marginTop:'0.2rem' }}>
+                    Dial anytime from any mobile phone
+                  </div>
+                </div>
+                <a 
+                  href="tel:+917965480398"
+                  style={{
+                    background:'rgba(16,185,129,0.2)',
+                    border:'1px solid rgba(16,185,129,0.5)',
+                    color:'#34d399',
+                    padding:'0.5rem 1rem',
+                    borderRadius:'8px',
+                    textDecoration:'none',
+                    fontSize:'0.82rem',
+                    fontWeight:600,
+                    display:'flex',
+                    alignItems:'center',
+                    gap:'0.4rem'
+                  }}
+                >
+                  <PhoneCall size={14} /> Call Now
+                </a>
+              </div>
+            </div>
+
+            {/* Request Callback Section */}
+            <div style={{ background:'rgba(139,92,246,0.06)', border:'1px solid rgba(139,92,246,0.25)', borderRadius:'14px', padding:'1.25rem' }}>
+              <div style={{ fontSize:'0.75rem', textTransform:'uppercase', letterSpacing:'0.05em', color:'var(--accent-purple)', marginBottom:'0.4rem', fontWeight:600 }}>
+                Option 2: Request Instant AI Callback
+              </div>
+              <p style={{ fontSize:'0.82rem', color:'rgba(255,255,255,0.7)', margin:'0 0 0.8rem 0' }}>
+                Enter your mobile number and our AI assistant will immediately ring your phone:
+              </p>
+
+              <div style={{ display:'flex', gap:'0.5rem', marginBottom:'0.75rem' }}>
+                <input
+                  type="tel"
+                  placeholder="Enter 10-digit number (e.g. 9876543210)"
+                  value={callbackPhone}
+                  onChange={e => setCallbackPhone(e.target.value)}
+                  style={{
+                    flex: 1,
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    borderRadius: '8px',
+                    padding: '0.65rem 0.85rem',
+                    color: 'white',
+                    fontSize: '0.9rem'
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={handleRequestCallback}
+                  disabled={callbackLoading}
+                  style={{
+                    background: 'linear-gradient(135deg, var(--accent-purple), #6366f1)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '0.65rem 1.1rem',
+                    fontWeight: 600,
+                    fontSize: '0.85rem',
+                    cursor: callbackLoading ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    whiteSpace: 'nowrap',
+                    opacity: callbackLoading ? 0.7 : 1
+                  }}
+                >
+                  <PhoneForwarded size={15} />
+                  {callbackLoading ? "Calling..." : "Call Me"}
+                </button>
+              </div>
+
+              {callbackResult && (
+                <div style={{
+                  padding: '0.65rem 0.85rem',
+                  borderRadius: '8px',
+                  fontSize: '0.8rem',
+                  background: callbackResult.success ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
+                  border: `1px solid ${callbackResult.success ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                  color: callbackResult.success ? '#34d399' : '#f87171'
+                }}>
+                  {callbackResult.message}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ─── SUCCESS MODAL ─── */}
       {showSummaryModal && summaryData && (
