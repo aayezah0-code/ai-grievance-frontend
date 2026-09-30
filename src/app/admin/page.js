@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+import { getMediaUrl } from '@/utils/media';
 
 export default function AdminDashboardPage() {
   const { user, logout, loading: userLoading } = useUser();
@@ -623,7 +624,12 @@ export default function AdminDashboardPage() {
             {/* Evidence Image if available */}
             {selectedComplaint.image_url && (
               <div style={{ marginBottom: '1.5rem', borderRadius: '14px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', maxHeight: '280px' }}>
-                <img src={selectedComplaint.image_url} alt="Evidence" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img
+                  src={getMediaUrl(selectedComplaint.image_url)}
+                  alt="Evidence"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
               </div>
             )}
 

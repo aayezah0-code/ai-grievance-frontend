@@ -6,6 +6,7 @@ import { useUser } from '@/context/UserContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { User, Settings, Bell, LogOut, Edit3, ShieldCheck } from 'lucide-react';
 import SmartSearch from './SmartSearch';
+import { getMediaUrl } from '@/utils/media';
 
 export default function Navbar() {
   const { user, logout } = useUser();
@@ -72,7 +73,12 @@ export default function Navbar() {
           >
             <div className="profile-avatar-container">
               {user?.profile_image_url ? (
-                <img src={user.profile_image_url} alt="Profile" className="profile-avatar-img" />
+                <img
+                  src={getMediaUrl(user.profile_image_url)}
+                  alt="Profile"
+                  className="profile-avatar-img"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
               ) : (
                 <div className="profile-avatar-placeholder">
                   {user?.full_name?.charAt(0) || 'C'}

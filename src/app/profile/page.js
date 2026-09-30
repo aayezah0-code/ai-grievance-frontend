@@ -5,6 +5,7 @@ import Sidebar from '@/components/Sidebar';
 import BoxParticles from '@/components/BoxParticles';
 import { useUser } from '@/context/UserContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { getMediaUrl } from '@/utils/media';
 import { 
   Camera, Save, X, Edit3, ShieldCheck, Mail, Phone, MapPin, 
   Map, Navigation, Hash, Lock, Award, TrendingUp, CheckCircle, Clock, User
@@ -151,7 +152,11 @@ function ProfilePageContent() {
                 <div className="profile-image-wrap">
                   <div className="profile-avatar-large">
                     {user?.profile_image_url ? (
-                      <img src={user.profile_image_url} alt="Profile" />
+                      <img
+                        src={getMediaUrl(user.profile_image_url)}
+                        alt="Profile"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
                     ) : (
                       <div className="avatar-placeholder-large">{formData.full_name?.charAt(0) || 'C'}</div>
                     )}

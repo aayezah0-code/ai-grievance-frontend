@@ -72,6 +72,7 @@ export default function LoginPage() {
               className="auth-input" 
               placeholder={t('auth.email')} 
               required
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useUser } from '@/context/UserContext';
+import { getMediaUrl } from '@/utils/media';
 
 const DashboardMap = dynamic(() => import('@/components/DashboardMap'), { 
   ssr: false,
@@ -328,7 +329,11 @@ export default function Dashboard() {
 
                 {lastSubmission.image_url && (
                   <div className="result-image-card">
-                    <img src={lastSubmission.image_url} alt="Evidence" />
+                    <img
+                      src={getMediaUrl(lastSubmission.image_url)}
+                      alt="Evidence"
+                      onError={e => e.target.style.display = 'none'}
+                    />
                     <div className="img-overlay">
                       <Camera size={14} /> Captured Evidence
                     </div>
@@ -448,7 +453,7 @@ export default function Dashboard() {
             {summaryData.image_url && (
               <div className="modal-image-wrap">
                 <img
-                  src={summaryData.image_url}
+                  src={getMediaUrl(summaryData.image_url)}
                   alt="Complaint"
                   className="modal-complaint-img"
                   onError={e => e.target.style.display = 'none'}

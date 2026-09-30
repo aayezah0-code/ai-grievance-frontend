@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { useUser } from '@/context/UserContext';
+import { getMediaUrl } from '@/utils/media';
 
 // --- AI ANALYSIS MODAL COMPONENT ---
 const AIAnalysisModal = ({ isOpen, onClose, data }) => {
@@ -243,8 +244,9 @@ export default function MyComplaints() {
                 {complaint.image_url ? (
                   <div className="card-image-wrapper">
                     <img
-                      src={complaint.image_url}
+                      src={getMediaUrl(complaint.image_url)}
                       alt="Issue Evidence"
+                      onError={(e) => { e.target.style.display = 'none'; }}
                     />
                     <div className="card-image-overlay"></div>
                     <div className="card-overlay-badges">
